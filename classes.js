@@ -1,55 +1,120 @@
+
+
+//class inheritance, subclasses, etc. done with help of p5.js reference
+// ^^ https://p5js.org/examples/objects-inheritance.html
+
 class Thing {
-	constructor(x_){
-		this.x=x_;
+	constructor(mode){
+		this.x=mode*width;
 		this.y=height/2;
 		this.yspeed=0;
 		this.xspeed=0;
 		this.size=.05;
-		this.x=0;
 		this.xspeed=1;
+		this.sizeInc=1;
+		this.sizeInc2=0.5;
+		this.mode=mode;
+		this.yInc=1;
+		this.xInc=0.01;
 	}
 
 	update(){
-		this.size*=1.05;
+		this.size+=this.sizeInc;
 		this.y+=this.yspeed;
-		this.yspeed+=0.01;
-		this.x+=this.xspeed;
-		this.xspeed+=0.01;
+		this.yspeed+=this.yInc;
+		this.sizeInc+=this.sizeInc2;
+
+		//console.log("x: "+this.x+", y: "+this.y);
+	}
+
+	move(){
+		if(this.mode==0){
+			this.x+=this.xspeed;
+			this.xspeed+=this.xInc;
+		}
+		else if(this.mode==1){
+			this.x+=this.xspeed;
+			this.xspeed-=this.xInc;
+		}
+		else{
+			console.log("Invalid mode");
+		}
+
+
 	}
 
 
 }
 
-class Obstacle extends Thing {
+
+class RoadLine extends Thing {
 	constructor(x_){
 		super(x_);
+		this.x=width/2;
+		this.y=height/2;
+	}
+
+	display(){
+		fill(255,204,0);
+		beginShape();
+		vertex(this.x+this.size*-0.25,this.y);
+		vertex(this.x+this.size*.25,this.y);
+		vertex(this.x+this.size*0.5,this.y+this.size*1.5);
+		vertex(this.x+this.size*-0.5,this.y+this.size*1.5);
+		endShape();
+	}
+
+}
+
+
+class Obstacle extends Thing {
+	constructor(x_, mode){
+		super(x_, mode);
+		this.xSize=0;
+		this.ySize=0;
 	}
 
 }
 
 class Bear extends Obstacle {
-	constructor(x_){
-		super(x_);
+	constructor(x_, mode, yInc, sizeInc, sizeInc2, xInc){
+		super(x_, mode, yInc, sizeInc, sizeInc2, xInc);
+		this.yInc=random(0.025, 0.250);
+		this.xSize=2*this.size;
+		this.ySize=this.size;
+		this.sizeInc=0.025;
+		this.sizeInc2=0.025;
+		this.xInc=random(0,0.5);
 	}
 
 	display(){
 		fill(255,0,0);
-		rect(this.x,this.y,this.size*2,this.size);
+		
+		this.xSize=2*this.size;
+		this.ySize=this.size;
+
+		rect(this.x,this.y,this.xSize,this.ySize);
+
 	}
 
+		
+
 }
+
 
 
 class Car {
 	constructor(){
 		this.palmLoc=createVector(0,0);
 		this.predictions=[];
+		this.xSize=100;
+		this.ySize=25;
 	}
 
 	display(){
-		fill(255,204,0);
-  		stroke(255,150,0);
-  		rect(this.palmLoc.x,this.palmLoc.y,200,50,10);
+		fill(80,100,255);
+  		noStroke();
+  		rect(this.palmLoc.x,this.palmLoc.y,this.xSize,this.ySize,10);
 	}
 
 
