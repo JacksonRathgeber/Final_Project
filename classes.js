@@ -80,7 +80,7 @@ class RoadLine extends Thing { // subclass of Thing
 
 }
 
-
+/*
 class Obstacle extends Thing { // subclass of Thing, envelops all obstacles
 	constructor(x_, mode){
 		super(x_, mode); //references Thing library for x_ and mode
@@ -91,7 +91,6 @@ class Obstacle extends Thing { // subclass of Thing, envelops all obstacles
 }
 
 
-/*
 class Bear extends Obstacle { 
 
 	//specific subclass within obstacles
