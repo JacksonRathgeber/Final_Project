@@ -161,7 +161,7 @@ function gameEnd(){
     textSize(50);
     text("Game Over!",width/2, 150);
     textSize(18);
-    text("Score: "+floor(timer/2)-8,width/2, 250);
+    text("Score: "+str(floor((timer/2)-8)),width/2, 250);
     noLoop();
 }
 
