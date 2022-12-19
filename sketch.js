@@ -446,12 +446,12 @@ function draw() {
       gameEnd();
     }
 
-    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/8)*8 ==round(atan2(
-      screenCenter.y-car.y,screenCenter.x-car.x)/8)*8 && deerModes[i]=="moving"){
+    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/10)*10 ==round(atan2(
+      screenCenter.y-car.y,screenCenter.x-car.x)/10)*10 && deerModes[i]=="moving"){
 
       deerModes[i]=="stopped";
       deer[i].vel.x/=2;
-      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/8)*8;
+      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/10)*10;
       //console.log("Deer stopped!");
     }
 
