@@ -95,7 +95,7 @@ function setup() {
 
   // ^^ set up video
 
-  frameRate(15);
+  frameRate(13);
 
   // ^^ set max fps
 
@@ -160,8 +160,8 @@ function setup() {
   deer=new Group();
   deer.x=width/2;
   deer.y=height/2;
-  deer.width=1;
-  deer.height=.75;
+  deer.width=0.6;
+  deer.height=.45;
   deer.color=color(255,100,255);
   deer.rotationLock=true;
 
@@ -231,28 +231,30 @@ function draw() {
 
   // ^^ only display car sprite during gameplay
 
-  if(round(timer%2,1)<=0.1 && gameStarted && !gameEnded){
+  if(round(timer%1.5,1)<=0.1 && gameStarted && !gameEnded){
     let roadLine=new RoadLine();
     roadLines.push(roadLine);
     //console.log("Roadline created");
+
+    console.log(floor(frameRate()));
   }
 
   // ^^ create road line every two seconds, add to roadLines array
 
 
-  if((round(random(300))==4 || round(timer%4,1)<=0.1) && gameStarted && !gameEnded){
+  if((round(random(350))==4 || round(timer%3,1)<=0.25) && gameStarted && !gameEnded){
     let bear=new bears.Sprite();
         
     bear.overlaps(bears);
     bear.overlaps(deer);
 
     bear.x = width*round(random(0,1));
-    bear.vel.y = random(0.25,0.75);
+    bear.vel.y = random(0.2,0.6);
     if(bear.x==0){
-      bear.vel.x = random(0.25,0.75);
+      bear.vel.x = random(0.2,0.6);
     }
     else if(bear.x==width){
-      bear.vel.x  = random(-0.75,-0.25);
+      bear.vel.x  = random(-0.6,-0.2);
     }
     //console.log("Bear created");
   }
@@ -261,7 +263,7 @@ function draw() {
   // bears cannot collide with each other
 
 
-  if(round(random(100))==4 && gameStarted && !gameEnded){
+  if(round(random(200))==4 && gameStarted && !gameEnded){
       let coin =new coins.Sprite();
           
       coin.overlaps(coins);
@@ -274,7 +276,7 @@ function draw() {
   // ^^ use RNG to create coins, move along random line on road, pass through each other
 
 
-  if(round(random(300))==4 && gameStarted && !gameEnded){
+  if(round(random(350))==4 && gameStarted && !gameEnded){
       let ghost = new ghosts.Sprite();
           
       ghost.overlaps(ghosts);
@@ -288,7 +290,7 @@ function draw() {
 
 
 
-  if((round(random(200))==4 || round(timer%5,1)<=0.1) && gameStarted && !gameEnded){
+  if((round(random(400))==4 || round(timer%5,1)<=0.075) && gameStarted && !gameEnded){
     let d=new deer.Sprite();
         
     d.overlaps(deer);
@@ -362,10 +364,10 @@ function draw() {
 
 
   for (let i=0;i<bears.length;i++){
-    bears[i].vel.y*=1.1;
-    bears[i].vel.x*=1.1;
-    bears[i].width*=1.1;
-    bears[i].height*=1.1;
+    bears[i].vel.y*=1.045;
+    bears[i].vel.x*=1.045;
+    bears[i].width*=1.052;
+    bears[i].height*=1.052;
     
     if(car.overlapping(bears[i]) && !ghosted){
       //console.log("Game Over!");
@@ -383,8 +385,8 @@ function draw() {
 
 
   for (let i=0;i<coins.length;i++){
-    coins[i].speed*=1.1;
-    coins[i].diameter*=1.1;
+    coins[i].speed*=1.05;
+    coins[i].diameter*=1.052;
     
     if(car.overlapping(coins[i])){
       coinCount++;
@@ -405,9 +407,9 @@ function draw() {
 
 
   for (let i=0;i<ghosts.length;i++){
-    ghosts[i].speed*=1.25;
-    ghosts[i].width*=1.25;
-    ghosts[i].height*=1.25;
+    ghosts[i].speed*=1.15;
+    ghosts[i].width*=1.15;
+    ghosts[i].height*=1.15;
     
     if(car.overlapping(ghosts[i])){
       ghosted=true;
@@ -427,16 +429,16 @@ function draw() {
 
   for (let i=0;i<deer.length;i++){
     if(deerModes[i]=="moving"){
-      deer[i].vel.x*=1.05;
-      deer[i].vel.y*=1.05;
-      deer[i].width*=1.05;
-      deer[i].height*=1.05;
+      deer[i].vel.x*=1.045;
+      deer[i].vel.y*=1.045;
+      deer[i].width*=1.052;
+      deer[i].height*=1.052;
       
     } else{
 
-      deer[i].width*=1.05;
-      deer[i].height*=1.05;
-      deer[i].vel*=1.1;
+      deer[i].width*=1.052;
+      deer[i].height*=1.052;
+      deer[i].vel*=1.045;
     }
     
     if(car.overlapping(deer[i]) && !ghosted){
@@ -444,12 +446,12 @@ function draw() {
       gameEnd();
     }
 
-    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/12)*12 ==round(atan2(
-      screenCenter.y-car.y,screenCenter.x-car.x)/12)*12 && deerModes[i]=="moving"){
+    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/8)*8 ==round(atan2(
+      screenCenter.y-car.y,screenCenter.x-car.x)/8)*8 && deerModes[i]=="moving"){
 
       deerModes[i]=="stopped";
       deer[i].vel.x/=2;
-      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/15)*15;
+      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/8)*8;
       //console.log("Deer stopped!");
     }
 
@@ -499,7 +501,6 @@ function draw() {
   // ^^ if nothing has happened yet, run pre-game code
   
   
-  //console.log(floor(frameRate()));
 
 
 
@@ -698,5 +699,45 @@ function followHand(str){ //move car to hand position
 }
 
 
+
+
+
+class RoadLine { // moving lines on road to simulate driving
+  constructor(mode){
+    this.x=width/2;
+    this.y=height/2;
+    this.yspeed=0;
+    this.size=.05;
+    this.sizeInc=1;
+    this.sizeInc2=0.5;
+    this.yInc=1;
+
+    // properties detail how the roadlines move, grows, etc.
+  }
+
+  update(){ // move object down and increase size to mimic coming closer in perspective
+    this.size+=this.sizeInc;
+    this.y+=this.yspeed;
+    this.yspeed+=this.yInc;
+    this.sizeInc+=this.sizeInc2;
+
+    //console.log("x: "+this.x+", y: "+this.y);
+  }
+
+  display(){ 
+    // draw trapezoid shape, grow and move down over time
+    // works hand-in-hand with update() function
+    
+    fill(255,204,0);
+    beginShape();
+    vertex(this.x+this.size*-0.25,this.y);
+    vertex(this.x+this.size*.25,this.y);
+    vertex(this.x+this.size*0.5,this.y+this.size*1.5);
+    vertex(this.x+this.size*-0.5,this.y+this.size*1.5);
+    endShape();
+  }
+
+
+}
 
 
