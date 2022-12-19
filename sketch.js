@@ -37,8 +37,10 @@ let deerModes;
 let screenCenter;
 
 let musicFolder;
-
 let bgm;
+let coinSound;
+let gameOverSound;
+
 
 p5.disableFriendlyErrors = true;
 
@@ -52,11 +54,19 @@ function preload(){
     "libraries/music/midnight highway.mp3",
     "libraries/music/mute city.mp3",
     "libraries/music/red canyon.mp3",
-    "libraries/music/splash wave.mp3",
     "libraries/music/white land 1.mp3",
     "libraries/music/white land 2.mp3"
     ];
-  bgm=loadSound(floor(random(musicFolder.length)));
+  
+  bgm=loadSound(musicFolder[floor(random(musicFolder.length))]);
+  bgm.setLoop(true);
+
+  coinSound=loadSound("libraries/sfx/coin.mp3");
+  coinSound.setVolume(0.1);
+
+  gameOverSound=loadSound("libraries/sfx/game over.mp3");
+
+  outputVolume(0.15);
 }
 
 
@@ -71,7 +81,7 @@ function setup() {
 
   // ^^ set up video
 
-  frameRate(12);
+  frameRate(15);
 
   roadLines=[];
   predictions=[];
@@ -133,7 +143,7 @@ function setup() {
   deer.y=height/2;
   deer.width=1;
   deer.height=.75;
-  deer.color='pink';
+  deer.color=color(255,100,255);
   deer.rotationLock=true;
 
   deerModes=[];
@@ -224,7 +234,7 @@ function draw() {
   // bears cannot collide with each other
 
 
-  if(round(random(250))==4 && gameStarted && !gameEnded){
+  if(round(random(100))==4 && gameStarted && !gameEnded){
       let coin =new coins.Sprite();
           
       coin.overlaps(coins);
@@ -237,7 +247,7 @@ function draw() {
   // ^^ use RNG to create coins, move along random line on road
 
 
-  if(round(random(500))==4 && gameStarted && !gameEnded){
+  if(round(random(300))==4 && gameStarted && !gameEnded){
       let ghost = new ghosts.Sprite();
           
       ghost.overlaps(ghosts);
@@ -343,6 +353,7 @@ function draw() {
     if(car.overlapping(coins[i])){
       coinCount++;
       score+=5;
+      coinSound.play();
       //console.log("Coin collected!");
     }
     
@@ -397,13 +408,13 @@ function draw() {
       gameEnd();
     }
 
-    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/10)*10 ==round(atan2(
-      screenCenter.y-car.y,screenCenter.x-car.x)/10)*10 && deerModes[i]=="moving"){
+    if(round(atan2(deer[i].y-car.y,deer[i].x-car.x)/12)*12 ==round(atan2(
+      screenCenter.y-car.y,screenCenter.x-car.x)/12)*12 && deerModes[i]=="moving"){
 
       deerModes[i]=="stopped";
       deer[i].vel.x/=2;
-      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/10)*10;
-      console.log("Deer stopped!");
+      deer[i].direction=round(atan2(car.y-screenCenter.y,car.x-screenCenter.x)/15)*15;
+      //console.log("Deer stopped!");
     }
 
     
@@ -437,13 +448,8 @@ function draw() {
     preGame();
   }
   
-  //console.log(frameRate());
-
-
-
-  if(gameStarted && !gameEnded){
-    bgm.play();
-  }
+  
+  //console.log(floor(frameRate()));
 
 
 
@@ -483,18 +489,21 @@ function preGame(){
       "and appear to grow as you approach. "+
       "You'll crash if you hit them.", width/2,263,425,100);
 
-    text("This is a duck. It's like a smaller bear, but it'll appear in a group with "+
-      "a mother at the head. It's also a bit sluggish, "+
-      "but it's doing it's best.", width/2,343,425,100);
-
-    text("This is a deer. Also like a bear, but it'll stop dead the "+
-      "second it sees you coming.", width/2,420,425,100);
+    text("This is a deer. Like a bear, but it'll stop dead the "+
+      "second it sees you coming. You'll have to go around them as you drive.", 
+      width/2,350,425,100);
 
     text("This is a coin. They'll appear occasionally on the road. Collect"+
-    " them to boost your score.", width/2,475,425,100);
+    " them to boost your score.", width/2,420,425,100);
 
     text("This is a ghost. Collecting one from the road "+
-      "will \"ghost\" you, making you temporarily invincble.", width/2,525,425,100);
+      "will \"ghost\" you, making you temporarily invincible.", width/2,475,425,100);
+
+    textAlign(CENTER);
+    textSize(24);
+    text("Dodge animals, collect power-ups, and "+
+      "survive as long as you can!", width/2,575);
+
 
     fill(80,100,255);
     rect(215,205,100,25);
@@ -503,19 +512,21 @@ function preGame(){
     rect(215,260,100,50);
 
 
-    //insert duck and deer shapes here
+    fill(255,100,255);
+    rect(235,350,60,45);
 
 
     fill(255,255,0);
-    ellipse(265,490,25,25);
+    ellipse(265,440,25,25);
 
 
     fill(255,100);
-    rect(245,520,40,40);
+    rect(245,470,40,40);
 
 
 
     fill(255,255,0);
+    textSize(18)
     if(modelReady==true){
       if (predictions.length>0){
         introHand.visible=true;
@@ -556,6 +567,7 @@ function gameStart(){
     gameEnded=false;
     calib.remove();
     introHand.remove();
+    bgm.play();
     //text("Begin!",width/2,150);
     //console.log("Begin!");
 
@@ -577,6 +589,8 @@ function gameEnd(){
     text("You Crashed!",width/2, 150);
     textSize(18);
     text("Final Score: "+round(score),width/2, 250);
+    bgm.stop();
+    gameOverSound.play();
     noLoop();
 }
 
